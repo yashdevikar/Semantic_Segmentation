@@ -84,7 +84,53 @@ def get_file_path(indice=1):
     else:
         raise Exception("Images path doesnt exist")
 
+#####################################################EXPERIMENTAL####################################################################################
+class modify():
+    def __init__(self, img, lbl):
+        self.image = img
+        self.label = lbl
+        self.modify_image()
+        self.modify_label()
+    
+    def modify_image(self):
+        image = self.image
+        image_height = self.image.shape[1]
+        image_width = self.image.shape[2]
+        no_channels = self.image.shape[0]
+        
+        a = image[0, ]
+        b = image[1, ]
+        c = image[2, ]
+        a1, a2 = np.split(a, 2)
+        b1, b2 = np.split(b, 2)
+        c1, c2 = np.split(c, 2)
+        r = np.zeros((3, a1.shape[0], a1.shape[1]))
+        y = np.zeros((3, a1.shape[0], a1.shape[1]))
+        
+        r[0, ] = a1
+        r[1, ] = b1
+        r[2, ] = c1
+        
+        y[0, ] = a2
+        y[1, ] = b2
+        y[2, ] = c2
+        
+        return r, y
+        
+        plt.imshow(np.rollaxis(np.rollaxis(r, 2), 2))
+        plt.show()
+        plt.imshow(np.rollaxis(np.rollaxis(y, 2), 2))
+        plt.show()
+        
 
+    def modify_label(self):
+        pass
+
+
+
+
+
+######################################################################################################################################################
 def get_one_data(indice, index):
     images_path, labels_path = get_file_path(indice)
     
@@ -122,5 +168,6 @@ def get_more_data(indice=1, sample_size=1):
 
 
 if __name__ == '__main__':
-    img, lbl = get_more_data(1, 5)
-    print(img.shape, lbl.shape)
+    img, lbl = get_more_data(1, 1)
+    print(img.shape)
+    modify(img[0], lbl[0])
