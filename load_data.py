@@ -37,6 +37,20 @@ def sanity_check_for_label(label):
                     a[i, j] = label[i,j,k]
     plt.imshow(a)
     plt.show()
+def sanity_check_for_label_modified(label):
+    # for a check wether the label is correctly modified or not. 
+    # Since label is one hot encoded, it cannot be displayed easily.
+    # Hence it is good to view it using this function. 
+    # input: label of dimension [image_height, image_width, no_of_channels]
+    # output: displays an the label using matplotlib.
+    a = np.zeros((image_height, image_width))
+    for k in range(8):
+        for i in range(int(image_height/2)):
+            for j in range(int(image_width/2)):
+                if label[i, j, k]!=0:
+                    a[i, j] = label[i,j,k]
+    plt.imshow(a)
+    plt.show()
 
 
 def normalized(rgb):
@@ -84,48 +98,76 @@ def get_file_path(indice=1):
     else:
         raise Exception("Images path doesnt exist")
 
-#####################################################EXPERIMENTAL####################################################################################
+#####################################################      EXPERIMENTAL        ####################################################################
 class modify():
     def __init__(self, img, lbl):
         self.image = img
         self.label = lbl
-        self.modify_image()
+        self.rgb_image = self.modify_image()
+        self.return_function()
         self.modify_label()
-    
+        
+    def return_function(self):
+        return self.rgb_image
+
+
     def modify_image(self):
         image = self.image
-        image_height = self.image.shape[1]
-        image_width = self.image.shape[2]
-        no_channels = self.image.shape[0]
-        
-        a = image[0, ]
-        b = image[1, ]
-        c = image[2, ]
-        a1, a2 = np.split(a, 2)
-        b1, b2 = np.split(b, 2)
-        c1, c2 = np.split(c, 2)
-        r = np.zeros((3, a1.shape[0], a1.shape[1]))
-        y = np.zeros((3, a1.shape[0], a1.shape[1]))
-        
-        r[0, ] = a1
-        r[1, ] = b1
-        r[2, ] = c1
-        
-        y[0, ] = a2
-        y[1, ] = b2
-        y[2, ] = c2
-        
-        return r, y
-        
-        plt.imshow(np.rollaxis(np.rollaxis(r, 2), 2))
-        plt.show()
-        plt.imshow(np.rollaxis(np.rollaxis(y, 2), 2))
-        plt.show()
-        
+                
+        img = []
+        for i in range(3):
+            img_ = image[i, ]
+            img.append(img_)
+        horizontal_split = []
+        for item in img:
+            a , b = self.split_into_two(item)
+            horizontal_split.append(a)
+            horizontal_split.append(b)
+        total_split = []
+        for item in horizontal_split:
+            a , b = self.vertical_split(item)
+            total_split.append(a)
+            total_split.append(b)
+        # print("len of total_split is {}".format(len(total_split)))
+        rgb_image = []
+        for i in range(4):
+            a = np.dstack((total_split[i], total_split[i+4], total_split[i+8]))
+            rgb_image.append(np.rollaxis(a, 2))
+            # rgb_image.append(a)
+        return rgb_image
+
+    def vertical_split(self, image):
+        return np.hsplit(image, 2)
+
+    def split_into_two(self, image):
+        return np.split(image, 2)
 
     def modify_label(self):
-        pass
+        # label shape is 1024 * 1280 * 8 
+        label = np.rollaxis(self.label, 2)
+        print(label.shape)
+        lbl = []
+        for i in range(8):
+            array = label[i, ]
+            lbl.append(array)
+        lbl1 = []
+        for item in lbl:
+            a, b = self.split_into_two(item)
+            lbl1.append(a)
+            lbl1.append(b)
+        
+        total_split = []
+        for  item in lbl1:
+            a , b = self.vertical_split(item)
+            total_split.append(a)
+            total_split.append(b)
+        rgb_image = []
+        for i in range(4):
+            a = np.dstack((total_split[i], total_split[i+4], total_split[i+8], total_split[i+12], total_split[i+16], total_split[i+20], total_split[i+24], total_split[i+28]))
+            rgb_image.append(a)
 
+        print(rgb_image[0].shape)
+        #### SOMETHING WRONG 
 
 
 
@@ -170,4 +212,5 @@ def get_more_data(indice=1, sample_size=1):
 if __name__ == '__main__':
     img, lbl = get_more_data(1, 1)
     print(img.shape)
-    modify(img[0], lbl[0])
+    image = modify(img[0], lbl[0]).return_function()
+    
