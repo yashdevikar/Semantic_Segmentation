@@ -9,8 +9,8 @@
         "batch_input_shape": [
           null,
           3,
-          1024,
-          1280
+          512,
+          640
         ],
         "dtype": "float32"
       }
@@ -807,7 +807,7 @@
         "trainable": true,
         "target_shape": [
           -1,
-          1310720
+          327680
         ]
       }
     },

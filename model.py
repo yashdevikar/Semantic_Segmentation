@@ -8,8 +8,8 @@ import subprocess as sbp
 import json
 
 sbp.call('clear', shell=True)     
-image_height = 1024
-image_width = 1280
+image_height = 512
+image_width = 640
 def print_last_layer_info(model):
   '''
     takes a model as input and prints the info
@@ -81,7 +81,7 @@ def create_classification_layer():
     num_classes = 8
     kernel = 3
     return[
-        Reshape((-1, 1310720)),
+        Reshape((-1, image_height*image_width)),
         # Flatten(data_format='channels_first'),
         Permute((2, 1)),
         Activation('softmax'),

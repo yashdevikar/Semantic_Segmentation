@@ -19,8 +19,8 @@ from load_data import *
 
 
 #GLOBAL PARAMETERS 
-image_height = 1024
-image_width = 1280
+image_height = 512
+image_width = 640
 data_shape = image_height*image_width
 
 class_weighting= [0.0001, 0.1826, 4.5640, 0.1417, 0.5051, 0.3826, 9.6446, 1.8418]
@@ -37,9 +37,9 @@ def train_file():
     earlystopcheck = EarlyStopping(monitor="loss", min_delta=0.00001, patience=3)
 
     callbacks_list = [checkpoint, earlystopcheck]
-    nb_epoch = 100
+    nb_epoch = 1
     batch_size = 1 # 6
-    num_iters = 40 # 10
+    num_iters = 1 # 10
     training_loss = []
     val_loss = []
     training_acc = []
@@ -53,11 +53,12 @@ def train_file():
         # sample training data
         train_data, train_label = get_more_data(1, train_subset_size)
         print(train_label.shape)
-        train_label = train_label.reshape((train_subset_size,1310720, 8))
+        train_label = train_label.reshape((4,327680, 8))
         
         # sample validation data
         val_data, val_label = get_more_data(2, val_subset_size)
-        val_label = np.reshape(val_label, (val_subset_size, data_shape, 8))
+        print("val_label shape {}".format(val_label.shape))
+        val_label = np.reshape(val_label, (4, data_shape, 8))
         
         print ("Iteration # {0}".format(iter))
         print ("Generating sample size {0} from train_data".format(train_subset_size))

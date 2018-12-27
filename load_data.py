@@ -5,14 +5,14 @@ import random
 import matplotlib.pyplot as plt
 from pathlib import Path
 
-image_height = 1024
-image_width = 1280
+image_height1 = 1024
+image_width1 = 1280
 
 def get_all_pixels_labels(label):
     # Since all pixels of labels are in the format of either a pixel value 
     # of multiple of 32 or 0, we seperate the pixels from the label and 
     # feed it in the max branch list to get all the varied variables.
-    # input: label of shape [image_height, image_width]
+    # input: label of shape [image_height1, image_width1]
     # output: a list with all the different values of the pixel value in input label
     max = []
     for i in range(label.shape[0]):
@@ -27,12 +27,12 @@ def sanity_check_for_label(label):
     # for a check wether the label is correctly modified or not. 
     # Since label is one hot encoded, it cannot be displayed easily.
     # Hence it is good to view it using this function. 
-    # input: label of dimension [image_height, image_width, no_of_channels]
+    # input: label of dimension [image_height1, image_width1, no_of_channels]
     # output: displays an the label using matplotlib.
-    a = np.zeros((image_height, image_width))
+    a = np.zeros((image_height1, image_width1))
     for k in range(8):
-        for i in range(image_height):
-            for j in range(image_width):
+        for i in range(image_height1):
+            for j in range(image_width1):
                 if label[i, j, k]!=0:
                     a[i, j] = label[i,j,k]
     plt.imshow(a)
@@ -41,12 +41,12 @@ def sanity_check_for_label_modified(label):
     # for a check wether the label is correctly modified or not. 
     # Since label is one hot encoded, it cannot be displayed easily.
     # Hence it is good to view it using this function. 
-    # input: label of dimension [image_height, image_width, no_of_channels]
+    # input: label of dimension [image_height1, image_width1, no_of_channels]
     # output: displays an the label using matplotlib.
-    a = np.zeros((image_height, image_width))
+    a = np.zeros((image_height1, image_width1))
     for k in range(8):
-        for i in range(int(image_height/2)):
-            for j in range(int(image_width/2)):
+        for i in range(int(image_height1/2)):
+            for j in range(int(image_width1/2)):
                 if label[i, j, k]!=0:
                     a[i, j] = label[i,j,k]
     plt.imshow(a)
@@ -77,11 +77,11 @@ def preprocess_label(label):
 def one_hot_it(label):
     # Does one hot encoding of the images. Seperates various 
     # pixel values from the labels and converts the 2D array 
-    # into a shape of [image_height, image_width, num_channels]
+    # into a shape of [image_height1, image_width1, num_channels]
     # input: a 2D label of normalised pixel value between 0 and 
     #        num_channels
     # output: a modified label with above mentioned dimensions with 8 channels
-    cropped_label = np.zeros((image_height, image_width, 8))
+    cropped_label = np.zeros((image_height1, image_width1, 8))
     for i in range(label.shape[0]):
         for j in range(label.shape[1]):
             cropped_label[i, j, label[i,j]] = label[i, j]
@@ -104,11 +104,11 @@ class modify():
         self.image = img
         self.label = lbl
         self.rgb_image = self.modify_image()
+        self.rgb_label = self.modify_label()
         self.return_function()
-        self.modify_label()
         
     def return_function(self):
-        return self.rgb_image
+        return self.rgb_image, self.rgb_label
 
 
     def modify_image(self):
@@ -143,33 +143,35 @@ class modify():
         return np.split(image, 2)
 
     def modify_label(self):
-        # label shape is 1024 * 1280 * 8 
         label = np.rollaxis(self.label, 2)
-        print(label.shape)
-        lbl = []
+        # label shape is 1024 * 1280 * 8 
+        seperate_layers = []
         for i in range(8):
             array = label[i, ]
-            lbl.append(array)
-        lbl1 = []
-        for item in lbl:
+            seperate_layers.append(array)
+        print("shape of seperate layers is {} and length of layer list is {}".format(seperate_layers[0].shape, len(seperate_layers)))
+        final_list = []
+        for item in seperate_layers:
             a, b = self.split_into_two(item)
-            lbl1.append(a)
-            lbl1.append(b)
-        
-        total_split = []
-        for  item in lbl1:
-            a , b = self.vertical_split(item)
-            total_split.append(a)
-            total_split.append(b)
-        rgb_image = []
+            a1, a2 = self.vertical_split(a)
+            b1, b2 = self.vertical_split(b)
+            final_list.append(a1)
+            final_list.append(a2)
+            final_list.append(b1)
+            final_list.append(b2)
+        seperate_layers = []
         for i in range(4):
-            a = np.dstack((total_split[i], total_split[i+4], total_split[i+8], total_split[i+12], total_split[i+16], total_split[i+20], total_split[i+24], total_split[i+28]))
-            rgb_image.append(a)
+            seperate_layers.append(np.dstack((final_list[i], final_list[i+4], final_list[i+8], final_list[i+12], final_list[i+16], final_list[i+20], final_list[i+24], final_list[i+28])))
 
-        print(rgb_image[0].shape)
-        #### SOMETHING WRONG 
+    
+        # print(seperate_layers[0].shape)
+        # sanity_check_for_label_modified(seperate_layers[0])
+        # a = np.hstack((seperate_layers[0], seperate_layers[1]))
+        # b = np.hstack((seperate_layers[2], seperate_layers[3]))
+        # c = np.vstack((a, b))
+        # sanity_check_for_label(c)
 
-
+        return seperate_layers
 
 
 ######################################################################################################################################################
@@ -202,8 +204,10 @@ def get_more_data(indice=1, sample_size=1):
         index = range(0, dataset_size)
     for ind in index:
         image, label = get_one_data(indice, ind)
-        img.append(image)
-        lbl.append(label)
+        imageArr, labelArr = modify(image, label).return_function()
+        for i in range(4):
+            img.append(imageArr[i])
+            lbl.append(labelArr[i])
     return np.array(img), np.array(lbl)
 
 
@@ -211,6 +215,6 @@ def get_more_data(indice=1, sample_size=1):
 
 if __name__ == '__main__':
     img, lbl = get_more_data(1, 1)
-    print(img.shape)
-    image = modify(img[0], lbl[0]).return_function()
+    imageArr, labelArr = modify(img[0], lbl[0]).return_function()
+    print("{}, {}, \n {}, {}".format(len(imageArr), len(labelArr), imageArr[0].shape, labelArr[0].shape))
     
