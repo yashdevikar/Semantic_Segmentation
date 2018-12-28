@@ -23,7 +23,7 @@ def print_last_layer_info(model):
 
 def encoding_layers():
     kernel=3
-    filter_size=64
+    filter_size=16
     pad=1
     pool_size=2
 
@@ -35,14 +35,14 @@ def encoding_layers():
         MaxPooling2D(pool_size=(pool_size, pool_size), data_format="channels_first"),
         
         ZeroPadding2D(padding=(pad,pad), data_format="channels_first"),
-        Conv2D(128, (kernel, kernel), padding='valid', data_format="channels_first"),
+        Conv2D(32, (kernel, kernel), padding='valid', data_format="channels_first"),
         BatchNormalization(),
         Activation('relu'),
         MaxPooling2D(pool_size=(pool_size, pool_size), data_format="channels_first"),
 
 
         ZeroPadding2D(padding=(pad,pad), data_format="channels_first"),
-        Conv2D(256, (kernel, kernel), padding='valid', data_format="channels_first"),
+        Conv2D(64, (kernel, kernel), padding='valid', data_format="channels_first"),
         BatchNormalization(),
         Activation('relu'),
         MaxPooling2D(pool_size=(pool_size, pool_size), data_format="channels_first"),
@@ -55,20 +55,20 @@ def decoding_layers():
 
     return[
         ZeroPadding2D(padding=(pad,pad), data_format="channels_first"),
-        Conv2D(256, (kernel, kernel), padding='valid', data_format="channels_first"),
-        BatchNormalization(),
-
-        UpSampling2D(size=(pool_size,pool_size), data_format="channels_first"),
-        Dropout(0.01),
-        ZeroPadding2D(padding=(pad,pad), data_format="channels_first"),
-        Conv2D(128, (kernel, kernel), padding='valid', data_format="channels_first"),
-        BatchNormalization(),
-
-
-        UpSampling2D(size=(pool_size,pool_size), data_format="channels_first"),
-        Dropout(0.01),
-        ZeroPadding2D(padding=(pad,pad), data_format="channels_first"),
         Conv2D(64, (kernel, kernel), padding='valid', data_format="channels_first"),
+        BatchNormalization(),
+
+        UpSampling2D(size=(pool_size,pool_size), data_format="channels_first"),
+        Dropout(0.01),
+        ZeroPadding2D(padding=(pad,pad), data_format="channels_first"),
+        Conv2D(32, (kernel, kernel), padding='valid', data_format="channels_first"),
+        BatchNormalization(),
+
+
+        UpSampling2D(size=(pool_size,pool_size), data_format="channels_first"),
+        Dropout(0.01),
+        ZeroPadding2D(padding=(pad,pad), data_format="channels_first"),
+        Conv2D(16, (kernel, kernel), padding='valid', data_format="channels_first"),
         BatchNormalization(),
 
         UpSampling2D(size=(pool_size,pool_size), data_format="channels_first"),

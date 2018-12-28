@@ -38,7 +38,7 @@
       "config": {
         "name": "conv2d_1",
         "trainable": true,
-        "filters": 64,
+        "filters": 16,
         "kernel_size": [
           3,
           3
@@ -155,7 +155,7 @@
       "config": {
         "name": "conv2d_2",
         "trainable": true,
-        "filters": 128,
+        "filters": 32,
         "kernel_size": [
           3,
           3
@@ -272,7 +272,7 @@
       "config": {
         "name": "conv2d_3",
         "trainable": true,
-        "filters": 256,
+        "filters": 64,
         "kernel_size": [
           3,
           3
@@ -389,7 +389,7 @@
       "config": {
         "name": "conv2d_4",
         "trainable": true,
-        "filters": 256,
+        "filters": 64,
         "kernel_size": [
           3,
           3
@@ -503,7 +503,7 @@
       "config": {
         "name": "conv2d_5",
         "trainable": true,
-        "filters": 128,
+        "filters": 32,
         "kernel_size": [
           3,
           3
@@ -617,7 +617,7 @@
       "config": {
         "name": "conv2d_6",
         "trainable": true,
-        "filters": 64,
+        "filters": 16,
         "kernel_size": [
           3,
           3

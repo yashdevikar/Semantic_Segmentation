@@ -14,6 +14,15 @@ sbp.call('clear', shell=True)
 import tensorflow
 from model import *
 
+########################################################################################################################
+from tensorflow.python.keras._impl.keras import backend as K
+import memory_saving_gradients
+# monkey patch Keras gradients to point to our custom version, with automatic checkpoint selection
+K.__dict__["gradients"] = memory_saving_gradients.gradients_memory
+from keras.optimizers import RMSprop
+########################################################################################################################
+
+
 #DATALOADING ALGORITHMS IMPORTS 
 from load_data import *
 
@@ -32,14 +41,17 @@ def train_file():
 
     net.summary()
     net.compile(loss="categorical_crossentropy", optimizer='adam', metrics=["categorical_accuracy"])
+    # net.compile(loss='categorical_crossentropy',
+            #   optimizer=RMSprop(),
+            #   metrics=['accuracy'])
     filepath = "weights.best.hdf5"
     checkpoint = ModelCheckpoint(filepath, monitor='loss', verbose=1, save_best_only=True, mode='min')
     earlystopcheck = EarlyStopping(monitor="loss", min_delta=0.00001, patience=3)
 
     callbacks_list = [checkpoint, earlystopcheck]
-    nb_epoch = 1
-    batch_size = 1 # 6
-    num_iters = 1 # 10
+    nb_epoch = 50
+    batch_size = 20 # 6
+    num_iters = 100 # 10
     training_loss = []
     val_loss = []
     training_acc = []

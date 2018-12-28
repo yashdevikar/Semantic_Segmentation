@@ -149,7 +149,7 @@ class modify():
         for i in range(8):
             array = label[i, ]
             seperate_layers.append(array)
-        print("shape of seperate layers is {} and length of layer list is {}".format(seperate_layers[0].shape, len(seperate_layers)))
+        # print("shape of seperate layers is {} and length of layer list is {}".format(seperate_layers[0].shape, len(seperate_layers)))
         final_list = []
         for item in seperate_layers:
             a, b = self.split_into_two(item)
@@ -213,8 +213,8 @@ def get_more_data(indice=1, sample_size=1):
 
 
 
-if __name__ == '__main__':
-    img, lbl = get_more_data(1, 1)
-    imageArr, labelArr = modify(img[0], lbl[0]).return_function()
-    print("{}, {}, \n {}, {}".format(len(imageArr), len(labelArr), imageArr[0].shape, labelArr[0].shape))
+# if __name__ == '__main__':
+#     img, lbl = get_more_data(1, 1)
+#     imageArr, labelArr = modify(img[0], lbl[0]).return_function()
+    # print("{}, {}, \n {}, {}".format(len(imageArr), len(labelArr), imageArr[0].shape, labelArr[0].shape))
     
