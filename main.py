@@ -15,11 +15,11 @@ import tensorflow
 from model import *
 
 ########################################################################################################################
-from tensorflow.python.keras._impl.keras import backend as K
-import memory_saving_gradients
-# monkey patch Keras gradients to point to our custom version, with automatic checkpoint selection
-K.__dict__["gradients"] = memory_saving_gradients.gradients_memory
-from keras.optimizers import RMSprop
+# from tensorflow.python.keras._impl.keras import backend as K
+# import memory_saving_gradients
+# # monkey patch Keras gradients to point to our custom version, with automatic checkpoint selection
+# K.__dict__["gradients"] = memory_saving_gradients.gradients_memory
+# from keras.optimizers import RMSprop
 ########################################################################################################################
 
 
